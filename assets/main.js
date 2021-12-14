@@ -114,6 +114,7 @@ const state = {
         "dateEntered": "2021/07/10",
         "stock": 10
       }],
+      users:[],
     selectedPage:'Home',
 
 }
@@ -204,6 +205,26 @@ function renderMain(){
         renderProductPage()
     }
 }
+function renderFooter(){
+    const footerEl = document.createElement('footer') 
+
+    const storeNameSpan = document.createElement('span') 
+    storeNameSpan.setAttribute('id','name')
+
+    const countrySpan = document.createElement('span') 
+    countrySpan.setAttribute('id','country')
+    countrySpan.textContent = 'United Kingdom'
+
+    const storeNameH1 = document.createElement('h1') 
+    storeNameH1.textContent = 'HOLLIXTON'
+    const flagImg = document.createElement('img') 
+    flagImg.setAttribute('src',"assets/uk.svg")
+    
+    document.body.append(footerEl)
+    footerEl.append(storeNameSpan,countrySpan)
+    storeNameSpan.append(storeNameH1)
+    countrySpan.prepend(flagImg)
+}
 function renderHomeProducts(){
     for(let product of state.products){
         createProductCard(product)
@@ -254,7 +275,6 @@ function renderProductPage(){
     singleNameDiv.append(singleH2,singlePriceP,addCartBtn)
 
 }
-
 function returnDiffBetween2Dates(date1,date2){
     let timeInMiliSec = date1.getTime() - date2.getTime()
     let numberOfDays = timeInMiliSec/1000/60/60/24
@@ -310,63 +330,27 @@ function createProductCard(product){
             productArticle.append(newDiv,productImg,productNameH3,pricesP)
             pricesP.append(oldPriceSpan,newPriceSpan)
 }
-function renderFooter(){
-    const footerEl = document.createElement('footer') 
-
-    const storeNameSpan = document.createElement('span') 
-    storeNameSpan.setAttribute('id','name')
-
-    const countrySpan = document.createElement('span') 
-    countrySpan.setAttribute('id','country')
-    countrySpan.textContent = 'United Kingdom'
-
-    const storeNameH1 = document.createElement('h1') 
-    storeNameH1.textContent = 'HOLLIXTON'
-    const flagImg = document.createElement('img') 
-    flagImg.setAttribute('src',"assets/uk.svg")
-    
-    document.body.append(footerEl)
-    footerEl.append(storeNameSpan,countrySpan)
-    storeNameSpan.append(storeNameH1)
-    countrySpan.prepend(flagImg)
-}
 function renderBody(){
     document.body.innerHTML=''
     renderHeader()
     renderMain()
     renderFooter()
 }
-function renderFooter(){
-    const footerEl = document.createElement('footer') 
-
-    const storeNameSpan = document.createElement('span') 
-    storeNameSpan.setAttribute('id','name')
-
-    const countrySpan = document.createElement('span') 
-    countrySpan.setAttribute('id','country')
-    countrySpan.textContent = 'United Kingdom'
-
-    const storeNameH1 = document.createElement('h1') 
-    storeNameH1.textContent = 'HOLLIXTON'
-    const flagImg = document.createElement('img') 
-    flagImg.setAttribute('src',"assets/uk.svg")
-    
-    document.body.append(footerEl)
-    footerEl.append(storeNameSpan,countrySpan)
-    storeNameSpan.append(storeNameH1)
-    countrySpan.prepend(flagImg)
-}
-
-
-
-// renderBody()
-
 function getStoreFromServer(){
     return fetch('http://localhost:3000/store').then(resp=>resp.json(),renderBody())
 }
+function getUsersFromServer(){
+    return fetch('http://localhost:3000/users').then(resp=>resp.json())
+}
+
 getStoreFromServer().then(store=>
     {
         state.products = store
-        renderBody()
+        getUsersFromServer().then(users=>{
+            state.users=users
+            renderBody()
+        })
+        
+        
     }
 )
