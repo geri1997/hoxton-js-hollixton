@@ -90,10 +90,12 @@ h3{
 main section{
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px,1fr));
+    justify-items: center;
     gap: 2rem;
 }
 main section article{
     display: grid;
+    max-width: 400px;
     gap: 1rem;
     position: relative;
     cursor: pointer;
@@ -128,6 +130,9 @@ span.old{
 span.price{
     font-weight: 900;
     font-size: 1.2rem;
+}
+#alone{
+    width: 350px;
 }
 /* #newPrice{
     display: none;
@@ -175,7 +180,7 @@ footer{
     color: white;
     font-size: 1.2rem;
     border-radius: 30px;
-
+    
 }
 .single-price-p{
     font-weight: 900;
@@ -217,4 +222,23 @@ footer{
     border: none;
     background-color: white;
     cursor: pointer;
+}
+/* Sign In Modal */
+.log-in-form{
+    display: grid;
+    gap: 0.5rem;
+}
+input.sign-in{
+    padding: 0.3rem;
+    border-radius: 0.7rem;
+    border-color: turquoise;
+}
+.sign-in-btn{
+    background-image: linear-gradient(to right, #1991b4, #0b6096);
+    border: none;
+    padding: 1rem 0.5rem;
+    font-weight: 700;
+    color: white;
+    font-size: 1.2rem;
+    border-radius: 30px;
 }
