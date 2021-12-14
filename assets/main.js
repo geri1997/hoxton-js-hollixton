@@ -173,6 +173,9 @@ function renderHeader(){
 
     const cartImg = document.createElement('img') 
     cartImg.setAttribute('src',"assets/cart.svg")
+    const nrOfCartItemsDiv = document.createElement('div')
+    nrOfCartItemsDiv.setAttribute('class','nr-in-cart')
+    nrOfCartItemsDiv.textContent = '1'
 
     document.body.append(headerEl)
     headerEl.append(navEl)
@@ -183,7 +186,7 @@ function renderHeader(){
     headerButtonsUl.append(glassLi,userLi,cartLi)
     glassLi.append(glassImg)
     userLi.append(userImg)
-    cartLi.append(cartImg)
+    cartLi.append(cartImg,nrOfCartItemsDiv)
 }
 function renderMain(){
     const mainEl = document.createElement('main') 
@@ -265,8 +268,25 @@ function renderProductPage(){
     singleH2.textContent = selectedProduct[0].name.toUpperCase()
     singleH2.setAttribute('class','single-h2')
     const singlePriceP = document.createElement('p')
-    singlePriceP.setAttribute('class','single-price-p')
-    singlePriceP.textContent = '£' + selectedProduct[0].price
+    singlePriceP.setAttribute('class','single-price-p prices')         
+    const oldPriceSpan = document.createElement('span')
+    
+    oldPriceSpan.setAttribute('class','price')
+    oldPriceSpan.setAttribute('id','oldPrice')
+    oldPriceSpan.textContent = '£' + selectedProduct[0].price
+    
+    singlePriceP.append(oldPriceSpan)
+    if(selectedProduct[0].discountedPrice){
+
+        oldPriceSpan.setAttribute('class','price old')
+        const newPriceSpan = document.createElement('span')
+        newPriceSpan.textContent = '£' + selectedProduct[0].discountedPrice
+        newPriceSpan.setAttribute('class','price new')
+        
+        newPriceSpan.setAttribute('id','newPrice')
+        singlePriceP.append(newPriceSpan)
+    }
+
     const addCartBtn = document.createElement('button')
     addCartBtn.setAttribute('class','add-cart-btn')
     addCartBtn.textContent = 'ADD TO BAG'
@@ -275,10 +295,12 @@ function renderProductPage(){
     singleNameDiv.append(singleH2,singlePriceP,addCartBtn)
 
 }
-function returnDayDiffBetween2Dates(date1,date2){
+function returnMiliDiffBetween2Dates(date1,date2){
     let timeInMiliSec = date1.getTime() - date2.getTime()
-    let numberOfDays = timeInMiliSec/1000/60/60/24
-    return Math.floor(numberOfDays)
+    return timeInMiliSec
+}
+function returnDaysToMili(nrOfDays){
+    return nrOfDays*24*60*60*1000
 }
 function createProductCard(product){
             const productArticle = document.createElement('article') 
@@ -292,11 +314,10 @@ function createProductCard(product){
             let productDate = new Date(product.dateEntered)
             let dateNow = new Date()
             
-            if(returnDayDiffBetween2Dates(dateNow,productDate)<10){
+            if(returnMiliDiffBetween2Dates(dateNow,productDate)<returnDaysToMili(10)){
                 const newDiv = document.createElement('div')
                 newDiv.setAttribute('class','new')
                 newDiv.textContent = 'NEW!'
-                // newDiv.style.display = 'block'
                 productArticle.append(newDiv)
             }
 
@@ -315,14 +336,16 @@ function createProductCard(product){
             oldPriceSpan.setAttribute('id','oldPrice')
             oldPriceSpan.textContent = '£' + product.price
             
-            const newPriceSpan = document.createElement('span') 
+            pricesP.append(oldPriceSpan)
             if(product.discountedPrice){
+
                 oldPriceSpan.setAttribute('class','price old')
+                const newPriceSpan = document.createElement('span')
                 newPriceSpan.textContent = '£' + product.discountedPrice
                 newPriceSpan.setAttribute('class','price new')
                 
                 newPriceSpan.setAttribute('id','newPrice')
-                newPriceSpan.style.display='inline-block'
+                pricesP.append(newPriceSpan)
             }
 
             
@@ -330,7 +353,7 @@ function createProductCard(product){
             
             productsSection.append(productArticle)
             productArticle.append(productImg,productNameH3,pricesP)
-            pricesP.append(oldPriceSpan,newPriceSpan)
+            
 }
 function renderBody(){
     document.body.innerHTML=''
