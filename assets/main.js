@@ -356,4 +356,17 @@ function renderFooter(){
     storeNameSpan.append(storeNameH1)
     countrySpan.prepend(flagImg)
 }
-renderBody()
+
+
+
+// renderBody()
+
+function getStoreFromServer(){
+    return fetch('http://localhost:3000/store').then(resp=>resp.json(),renderBody())
+}
+getStoreFromServer().then(store=>
+    {
+        state.products = store
+        renderBody()
+    }
+)

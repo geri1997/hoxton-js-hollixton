@@ -99,6 +99,7 @@ main section article{
 }
 div.new {
     position: absolute;
+    z-index: 2;
     display: none;
     right:2rem;
     top: -1.94rem;
