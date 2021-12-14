@@ -6,7 +6,7 @@ const state = {
         "image": "https://img.hollisterco.com/is/image/anf/KIC_324-1085-0123-100_prod1",
         "price": 40,
         "discountedPrice": 21.99,
-        "dateEntered": "2021/08/10",
+        "dateEntered": "2021/12/10",
         "stock": 10
       },
       {
@@ -24,7 +24,7 @@ const state = {
         "name": "Gilly Hicks Cozy Joggers",
         "image": "https://img.hollisterco.com/is/image/anf/KIC_346-1252-0485-116_prod1",
         "price": 27,
-        "dateEntered": "2021/12/12",
+        "dateEntered": "2021/12/06",
         "stock": 15
       },
       {
@@ -51,7 +51,7 @@ const state = {
         "name": "Gilly Hicks Smiley Socks 2-Pack",
         "image": "https://img.hollisterco.com/is/image/anf/KIC_354-1020-0010-900_prod1",
         "price": 14,
-        "dateEntered": "2021/06/11",
+        "dateEntered": "2021/12/11",
         "stock": 1
       },
       {
@@ -71,7 +71,7 @@ const state = {
         "image": "https://img.hollisterco.com/is/image/anf/KIC_324-1072-0132-108_prod1",
         "price": 55,
         "discountedPrice": 34.99,
-        "dateEntered": "2021/08/10",
+        "dateEntered": "2021/12/10",
         "stock": 12
       },
       {
@@ -111,7 +111,7 @@ const state = {
         "image": "https://img.hollisterco.com/is/image/anf/KIC_354-1013-0002-100_prod1",
         "price": 14,
         "discountedPrice": 5.99,
-        "dateEntered": "2021/07/10",
+        "dateEntered": "2021/12/10",
         "stock": 10
       }],
       users:[],
@@ -275,7 +275,7 @@ function renderProductPage(){
     singleNameDiv.append(singleH2,singlePriceP,addCartBtn)
 
 }
-function returnDiffBetween2Dates(date1,date2){
+function returnDayDiffBetween2Dates(date1,date2){
     let timeInMiliSec = date1.getTime() - date2.getTime()
     let numberOfDays = timeInMiliSec/1000/60/60/24
     return Math.floor(numberOfDays)
@@ -288,14 +288,16 @@ function createProductCard(product){
             })
 
 
-            const newDiv = document.createElement('div')
-            newDiv.setAttribute('class','new')
-            newDiv.textContent = 'NEW!'
+
             let productDate = new Date(product.dateEntered)
             let dateNow = new Date()
             
-            if(returnDiffBetween2Dates(dateNow,productDate)<10){
-                newDiv.style.display = 'block'
+            if(returnDayDiffBetween2Dates(dateNow,productDate)<10){
+                const newDiv = document.createElement('div')
+                newDiv.setAttribute('class','new')
+                newDiv.textContent = 'NEW!'
+                // newDiv.style.display = 'block'
+                productArticle.append(newDiv)
             }
 
             const productImg = document.createElement('img') 
@@ -327,7 +329,7 @@ function createProductCard(product){
             const productsSection = document.querySelector('.store-items')
             
             productsSection.append(productArticle)
-            productArticle.append(newDiv,productImg,productNameH3,pricesP)
+            productArticle.append(productImg,productNameH3,pricesP)
             pricesP.append(oldPriceSpan,newPriceSpan)
 }
 function renderBody(){
