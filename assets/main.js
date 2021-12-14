@@ -171,7 +171,39 @@ function renderSearchModal() {
   modalBackgroundDiv.append(modalDiv);
   document.body.append(modalBackgroundDiv);
 }
+function renderProfileModal() {
+  const modalBackgroundDiv = document.createElement("div");
+  modalBackgroundDiv.setAttribute("class", "modal-background");
+  modalBackgroundDiv.addEventListener("click", (e) => {
+    if (e.target === modalBackgroundDiv) {
+      modalBackgroundDiv.remove();
+    }
+  });
+  const modalDiv = document.createElement("div");
+  modalDiv.setAttribute("class", "modal");
+  const profileNameH2 = document.createElement("h2");
+  profileNameH2.textContent =
+    "Hello " + state.user.firstName + " " + state.user.lastName;
+  const signOutBtn = document.createElement("button");
+  signOutBtn.textContent = "SIGN OUT";
+  signOutBtn.setAttribute("class", "sign-out-btn");
+  signOutBtn.addEventListener("click", (e) => {
+      state.user=null
+      renderBody()
+  });
+  const modalCloseBtn = document.createElement("button");
+  modalCloseBtn.textContent = "X";
+  modalCloseBtn.setAttribute("class", "close-modal-btn");
+  modalCloseBtn.addEventListener("click", (e) => {
+    if (e.target === modalCloseBtn) {
+      modalBackgroundDiv.remove();
+    }
+  });
 
+  modalDiv.append(modalCloseBtn, profileNameH2, signOutBtn);
+  modalBackgroundDiv.append(modalDiv);
+  document.body.append(modalBackgroundDiv);
+}
 function renderSignInModal() {
   const modalBackgroundDiv = document.createElement("div");
   modalBackgroundDiv.setAttribute("class", "modal-background");
@@ -287,7 +319,7 @@ function renderHeader() {
 
   const userLi = document.createElement("li");
   userLi.addEventListener("click", (e) => {
-    renderSignInModal();
+    !state.user ? renderSignInModal() : renderProfileModal();
   });
 
   const userImg = document.createElement("img");

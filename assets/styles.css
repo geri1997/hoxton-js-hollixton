@@ -233,7 +233,7 @@ input.sign-in{
     border-radius: 0.7rem;
     border-color: turquoise;
 }
-.sign-in-btn{
+.sign-in-btn, .sign-out-btn{
     background-image: linear-gradient(to right, #1991b4, #0b6096);
     border: none;
     padding: 1rem 0.5rem;
@@ -241,4 +241,5 @@ input.sign-in{
     color: white;
     font-size: 1.2rem;
     border-radius: 30px;
+    cursor: pointer;
 }
