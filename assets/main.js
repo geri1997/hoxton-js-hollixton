@@ -115,11 +115,49 @@ const state = {
         "stock": 10
       }],
       users:[],
+      searchTerm:'',
     selectedPage:'Home',
 
 }
 
+function renderSearchModal(){
+    const modalBackgroundDiv = document.createElement('div')
+    modalBackgroundDiv.setAttribute('class','modal-background')
+    modalBackgroundDiv.addEventListener('click',e=>{
+        if(e.target===modalBackgroundDiv){
+            modalBackgroundDiv.remove()
+        }
+    })
+    const modalDiv = document.createElement('div')
+    modalDiv.setAttribute('class','modal')
+    const searchH2 = document.createElement('h2')
+    searchH2.textContent = 'Search for your favourite items!'
+    const searchForm = document.createElement('form')
+    searchForm.addEventListener('submit',e=>{
+        e.preventDefault()
+        state.searchTerm = searchInput.value.toLowerCase()
+        renderBody()
+        // modalBackgroundDiv.remove()
+    })
+    const searchInput = document.createElement('input')
+    searchInput.setAttribute('type','search')
+    searchInput.setAttribute('class','search-box')
+    searchInput.setAttribute('autocomplete','off')
+    searchInput.setAttribute('placeholder','Search...')
+    const modalCloseBtn = document.createElement('button')
+    modalCloseBtn.textContent = 'X'
+    modalCloseBtn.setAttribute('class','close-modal-btn')
+    modalCloseBtn.addEventListener('click',e=>{
+        if(e.target===modalCloseBtn){
+            modalBackgroundDiv.remove()
+        }
+    })
 
+    searchForm.append(searchInput)
+    modalDiv.append(modalCloseBtn,searchH2,searchForm)
+    modalBackgroundDiv.append(modalDiv)
+    document.body.append(modalBackgroundDiv)
+}
 function renderHeader(){
     const headerEl = document.createElement('header') 
 
@@ -132,6 +170,7 @@ function renderHeader(){
     storeNameH1.textContent = 'HOLLIXTON'
     storeNameH1.addEventListener('click',e=>{
         state.selectedPage='Home'
+        state.searchTerm=''
         renderBody()
     })
     const categoryUl = document.createElement('ul') 
@@ -139,18 +178,21 @@ function renderHeader(){
     const girlsLi = document.createElement('li') 
     girlsLi.textContent = 'Girls'
     girlsLi.addEventListener('click',e=>{
+        state.searchTerm=''
         state.selectedPage='Girls'
         renderBody()
     })
     const guysLi = document.createElement('li') 
     guysLi.textContent = 'Guys'
     guysLi.addEventListener('click',e=>{
+        state.searchTerm=''
         state.selectedPage='Guys'
         renderBody()
     })
     const saleLi = document.createElement('li') 
     saleLi.textContent = 'Sale'
     saleLi.addEventListener('click',e=>{
+        state.searchTerm=''
         state.selectedPage='Sale'
         renderBody()
     })
@@ -159,7 +201,10 @@ function renderHeader(){
 
     const headerButtonsUl = document.createElement('ul') 
 
-    const glassLi = document.createElement('li') 
+    const glassLi = document.createElement('li')
+    glassLi.addEventListener('click',e=>{
+        renderSearchModal()
+    }) 
 
     const glassImg = document.createElement('img') 
     glassImg.setAttribute('src',"assets/glass.svg")
@@ -229,12 +274,15 @@ function renderFooter(){
     countrySpan.prepend(flagImg)
 }
 function renderHomeProducts(){
-    for(let product of state.products){
+    // if(returnFilteredProductsBySearch().length===1){
+    //     // document.querySelector('main section article').setAttribute('id','alone')
+    // }
+    for(let product of returnFilteredProductsBySearch()){
         createProductCard(product)
     }
 }
 function renderGirlsProducts(){
-    let girlsProducts = state.products.filter(product=>product.type==='Girls')
+    let girlsProducts = returnFilteredProductsBySearch().filter(product=>product.type==='Girls')
         for(let product of girlsProducts){
             createProductCard(product)
         }
@@ -246,7 +294,8 @@ function renderGuysProducts(){
         }
 }
 function renderSaleProducts(){
-    let saleProducts = state.products.filter(product=>product.hasOwnProperty('discountedPrice'))
+    
+    let saleProducts = returnFilteredProductsBySearch().filter(product=>product.hasOwnProperty('discountedPrice'))
         for(let product of saleProducts){
             createProductCard(product)
         }
@@ -357,6 +406,10 @@ function createProductCard(product){
 }
 function renderBody(){
     document.body.innerHTML=''
+    window.scroll({
+        top: 0, 
+        left: 0,  
+       });
     renderHeader()
     renderMain()
     renderFooter()
@@ -379,3 +432,13 @@ getStoreFromServer().then(store=>
         
     }
 )
+
+function returnFilteredProductsBySearch(){
+     let filteredBySearch = state.products.filter(product=>{
+            if(state.searchTerm!==''){
+                return product.name.toLowerCase().includes(state.searchTerm)
+            }
+            return true
+        })
+        return filteredBySearch
+}
