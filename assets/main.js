@@ -288,7 +288,7 @@ function renderGirlsProducts(){
         }
 }
 function renderGuysProducts(){
-    let guysProducts = state.products.filter(product=>product.type==='Guys')
+    let guysProducts = returnFilteredProductsBySearch().filter(product=>product.type==='Guys')
         for(let product of guysProducts){
             createProductCard(product)
         }
@@ -415,7 +415,7 @@ function renderBody(){
     renderFooter()
 }
 function getStoreFromServer(){
-    return fetch('http://localhost:3000/store').then(resp=>resp.json(),renderBody())
+    return fetch('http://localhost:3000/store').then(resp=>resp.json(),err=>renderBody())
 }
 function getUsersFromServer(){
     return fetch('http://localhost:3000/users').then(resp=>resp.json())
@@ -434,11 +434,11 @@ getStoreFromServer().then(store=>
 )
 
 function returnFilteredProductsBySearch(){
-     let filteredBySearch = state.products.filter(product=>{
-            if(state.searchTerm!==''){
-                return product.name.toLowerCase().includes(state.searchTerm)
-            }
-            return true
-        })
+    let filteredBySearch = state.products
+    if(state.searchTerm!==''){
+        filteredBySearch = filteredBySearch.filter(product=>{
+            return product.name.toLowerCase().includes(state.searchTerm)
+            })
+    }
         return filteredBySearch
 }
