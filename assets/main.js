@@ -159,29 +159,25 @@ function renderCartModal() {
   let totalPay = 0;
   //create items
   modalDiv.append(bagH2);
-  if (state.user&&state.user.bag.length!==0) {
+  if (state.user && state.user.bag.length !== 0) {
     for (let product of state.user.bag) {
       totalPay += createBagItemAndReturnPrice(product, modalDiv);
     }
     const payBtn = document.createElement("button");
     payBtn.setAttribute("class", "pay-btn");
     payBtn.textContent = `PAY NOW: £${totalPay.toFixed(2)}`;
-    payBtn.addEventListener('click',e=>{
-        state.user.bag = []
-        renderBody()
-        updateBagServer()
-    })
+    payBtn.addEventListener("click", (e) => {
+      state.user.bag = [];
+      renderBody();
+      updateBagServer();
+    });
     modalDiv.append(payBtn);
   }
 
-  
-  
   modalDiv.append(modalCloseBtn);
   document.body.append(modalBackgroundDiv);
 }
-// function getTotalPrice(){
-//     for()
-// }
+
 function createBagItemAndReturnPrice(product, appendTo) {
   let productInCart = state.products.find((prod) => prod.id === product.id);
   let totalPay = 0;
@@ -708,6 +704,22 @@ function renderProductPage() {
   const addCartBtn = document.createElement("button");
   addCartBtn.setAttribute("class", "add-cart-btn");
   addCartBtn.textContent = "ADD TO BAG";
+  addCartBtn.addEventListener("click", (e) => {
+    if (state.user&&state.user.bag.filter(prod=>prod.id===selectedProduct[0].id).length===0) {
+      state.user.bag.push({ id: selectedProduct[0].id, quantity: 1 });
+      state.selectedPage='Home'
+      renderBody()
+      updateBagServer()
+    } else if(state.user) {
+        let existingProd = state.user.bag.filter(prod=>prod.id===selectedProduct[0].id)
+        state.user.bag[state.user.bag.indexOf(existingProd[0])].quantity++
+        state.selectedPage='Home'
+        renderBody()
+        updateBagServer()
+    }else{
+      renderSignInModal();
+    }
+  });
   mainEl.append(singleProductArticle);
   singleProductArticle.append(singleImg, singleNameDiv);
   singleNameDiv.append(singleH2, singlePriceP, addCartBtn);
