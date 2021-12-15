@@ -168,6 +168,7 @@ function renderCartModal() {
     payBtn.textContent = `PAY NOW: £${totalPay.toFixed(2)}`;
     payBtn.addEventListener("click", (e) => {
       state.user.bag = [];
+      localStorage.setItem('User',JSON.stringify(state.user))
       renderBody();
       updateBagServer();
     });
@@ -216,6 +217,7 @@ function createBagItemAndReturnPrice(product, appendTo) {
   rmvBtn.addEventListener("click", (e) => {
     if (product.quantity > 1) {
       product.quantity--;
+      localStorage.setItem('User',JSON.stringify(state.user))
       renderBody();
       renderCartModal();
       updateBagServer();
@@ -223,6 +225,7 @@ function createBagItemAndReturnPrice(product, appendTo) {
       state.user.bag = state.user.bag.filter(
         (productInBag) => productInBag !== product
       );
+      localStorage.setItem('User',JSON.stringify(state.user))
       renderBody();
       renderCartModal();
       updateBagServer();
@@ -299,6 +302,7 @@ function renderProfileModal() {
   signOutBtn.setAttribute("class", "sign-out-btn");
   signOutBtn.addEventListener("click", (e) => {
     state.user = null;
+    localStorage.setItem('User',JSON.stringify(state.user))
     renderBody();
   });
   const modalCloseBtn = document.createElement("button");
@@ -333,6 +337,7 @@ function renderSignInModal() {
     getUserFromServer(emailInput.value).then((user) => {
       if (user.password === passwInput.value) {
         state.user = user;
+        localStorage.setItem("User", JSON.stringify(state.user));
         renderBody();
       }
     });
@@ -433,6 +438,7 @@ function renderSignUpModal() {
     fetch(`http://localhost:3000/users/${newUser.id}`).then((resp) => {
       if (!resp.ok) {
         state.user = newUser;
+        localStorage.setItem('User',JSON.stringify(state.user))
         postNewUserToServer(newUser);
         modalBackgroundDiv.remove();
       } else {
@@ -715,9 +721,9 @@ function renderProductPage() {
   const addCartBtn = document.createElement("button");
   addCartBtn.setAttribute("class", "add-cart-btn");
   addCartBtn.textContent = "ADD TO BAG";
-  if(selectedProduct[0].stock===0){
-    addCartBtn.setAttribute('disabled','')
-    addCartBtn.setAttribute('id','disabled-cart-btn')
+  if (selectedProduct[0].stock === 0) {
+    addCartBtn.setAttribute("disabled", "");
+    addCartBtn.setAttribute("id", "disabled-cart-btn");
   }
   addCartBtn.addEventListener("click", (e) => {
     if (
@@ -726,6 +732,7 @@ function renderProductPage() {
         .length === 0
     ) {
       state.user.bag.push({ id: selectedProduct[0].id, quantity: 1 });
+      localStorage.setItem('User',JSON.stringify(state.user))
       state.selectedPage = "Home";
       renderBody();
       updateBagServer();
@@ -734,6 +741,7 @@ function renderProductPage() {
         (prod) => prod.id === selectedProduct[0].id
       );
       state.user.bag[state.user.bag.indexOf(existingProd[0])].quantity++;
+      localStorage.setItem('User',JSON.stringify(state.user))
       state.selectedPage = "Home";
       renderBody();
       updateBagServer();
@@ -771,12 +779,12 @@ function createProductCard(product) {
     productArticle.append(newDiv);
   }
 
-  if(product.stock ===0){
+  if (product.stock === 0) {
     const stockDiv = document.createElement("div");
     stockDiv.setAttribute("class", "stock");
     stockDiv.textContent = "No Stock!";
     productArticle.append(stockDiv);
-  }else if(product.stock < 10) {
+  } else if (product.stock < 10) {
     const stockDiv = document.createElement("div");
     stockDiv.setAttribute("class", "stock");
     stockDiv.textContent = "Low Stock!";
@@ -820,6 +828,7 @@ function renderBody() {
     top: 0,
     left: 0,
   });
+  getUserFromLocalStorage();
   renderHeader();
   renderMain();
   renderFooter();
@@ -858,3 +867,9 @@ getStoreFromServer().then((store) => {
   state.products = store;
   renderBody();
 });
+
+function getUserFromLocalStorage() {
+  if (localStorage.getItem("User") !== null)
+    state.user = JSON.parse(localStorage.getItem("User"));
+  console.log(state.user);
+}
