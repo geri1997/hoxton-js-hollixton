@@ -224,16 +224,16 @@ footer{
     cursor: pointer;
 }
 /* Sign In Modal */
-.log-in-form{
+.log-in-form, .sign-up-form{
     display: grid;
     gap: 0.5rem;
 }
-input.sign-in{
+input.sign-in, input.sign-up,input.name, input.surname{
     padding: 0.3rem;
     border-radius: 0.7rem;
     border-color: turquoise;
 }
-.sign-in-btn, .sign-out-btn{
+.sign-in-btn, .sign-out-btn, .sign-up-btn{
     background-image: linear-gradient(to right, #1991b4, #0b6096);
     border: none;
     padding: 1rem 0.5rem;
@@ -242,4 +242,12 @@ input.sign-in{
     font-size: 1.2rem;
     border-radius: 30px;
     cursor: pointer;
+}
+.sign-up-span-link, .sign-in-span-link{
+    color: blue;
+    font-weight: 600;
+    cursor: pointer;
+}
+.sign-up-span-link:hover, .sign-in-span-link:hover{
+    text-decoration: underline;
 }

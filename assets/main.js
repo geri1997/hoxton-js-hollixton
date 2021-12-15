@@ -188,8 +188,8 @@ function renderProfileModal() {
   signOutBtn.textContent = "SIGN OUT";
   signOutBtn.setAttribute("class", "sign-out-btn");
   signOutBtn.addEventListener("click", (e) => {
-      state.user=null
-      renderBody()
+    state.user = null;
+    renderBody();
   });
   const modalCloseBtn = document.createElement("button");
   modalCloseBtn.textContent = "X";
@@ -204,6 +204,7 @@ function renderProfileModal() {
   modalBackgroundDiv.append(modalDiv);
   document.body.append(modalBackgroundDiv);
 }
+
 function renderSignInModal() {
   const modalBackgroundDiv = document.createElement("div");
   modalBackgroundDiv.setAttribute("class", "modal-background");
@@ -246,10 +247,23 @@ function renderSignInModal() {
   passwInput.setAttribute("type", "password");
   passwInput.setAttribute("id", "password");
   passwInput.setAttribute("class", "password-box sign-in");
+  passwInput.setAttribute("required", "");
 
   const signInBtn = document.createElement("button");
   signInBtn.textContent = "SIGN IN";
   signInBtn.setAttribute("class", "sign-in-btn");
+
+  const signUpP = document.createElement("p");
+  signUpP.textContent = "or ";
+  signUpP.setAttribute("class", "sign-up-p");
+
+  const signUpSpan = document.createElement("span");
+  signUpSpan.textContent = "Sign Up";
+  signUpSpan.setAttribute("class", "sign-up-span-link");
+  signUpSpan.addEventListener("click", (e) => {
+    renderBody();
+    renderSignUpModal();
+  });
 
   const modalCloseBtn = document.createElement("button");
   modalCloseBtn.textContent = "X";
@@ -260,12 +274,138 @@ function renderSignInModal() {
     }
   });
 
-  logInForm.append(emailLabel, emailInput, passwLabel, passwInput, signInBtn);
+  logInForm.append(
+    emailLabel,
+    emailInput,
+    passwLabel,
+    passwInput,
+    signInBtn,
+    signUpP
+  );
+  signUpP.append(signUpSpan);
   modalDiv.append(modalCloseBtn, signInH2, logInForm);
   modalBackgroundDiv.append(modalDiv);
   document.body.append(modalBackgroundDiv);
 }
+function postNewUserToServer(user){
+    fetch("http://localhost:3000/users/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(user),
+    });
+}
+function renderSignUpModal() {
+  const modalBackgroundDiv = document.createElement("div");
+  modalBackgroundDiv.setAttribute("class", "modal-background");
+  modalBackgroundDiv.addEventListener("click", (e) => {
+    if (e.target === modalBackgroundDiv) {
+      modalBackgroundDiv.remove();
+    }
+  });
+  const modalDiv = document.createElement("div");
+  modalDiv.setAttribute("class", "modal");
+  const signUpH2 = document.createElement("h2");
+  signUpH2.textContent = "Sign Up";
+  const signUpForm = document.createElement("form");
+  signUpForm.setAttribute("class", "sign-up-form");
+  signUpForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    let newUser = {
+        firstName:nameInput.value,
+        lastName:surnameInput.value,
+        id:emailInput.value,
+        password:passwInput.value,
+        bag:[]
+    }
+    state.user = newUser
+    postNewUserToServer(newUser)
+    modalBackgroundDiv.remove();
+  });
+  const nameLabel = document.createElement("label");
+  nameLabel.setAttribute("for", "name");
+  nameLabel.textContent = "First Name";
+  const nameInput = document.createElement("input");
+  nameInput.setAttribute("type", "text");
+  nameInput.setAttribute("id", "name");
+  nameInput.setAttribute("class", "name-box name");
+  nameInput.setAttribute("autocomplete", "off");
+  nameInput.setAttribute("name", "name-inp");
+  nameInput.setAttribute("required", "");
+  const surnameLabel = document.createElement("label");
+  surnameLabel.setAttribute("for", "surname");
+  surnameLabel.textContent = "Surname";
+  const surnameInput = document.createElement("input");
+  surnameInput.setAttribute("type", "text");
+  surnameInput.setAttribute("id", "surname");
+  surnameInput.setAttribute("class", "surname-box surname");
+  surnameInput.setAttribute("autocomplete", "off");
+  surnameInput.setAttribute("name", "surname-inp");
+  surnameInput.setAttribute("required", "");
+  const emailLabel = document.createElement("label");
+  emailLabel.setAttribute("for", "email");
+  emailLabel.textContent = "Email";
+  const emailInput = document.createElement("input");
+  emailInput.setAttribute("type", "email");
+  emailInput.setAttribute("id", "email");
+  emailInput.setAttribute("class", "email-box sign-up");
+  emailInput.setAttribute("autocomplete", "off");
+  emailInput.setAttribute("name", "email-inp");
+  emailInput.setAttribute("required", "");
 
+  const passwLabel = document.createElement("label");
+  passwLabel.setAttribute("for", "password");
+  passwLabel.textContent = "Password";
+
+  const passwInput = document.createElement("input");
+  passwInput.setAttribute("type", "password");
+  passwInput.setAttribute("id", "password");
+  passwInput.setAttribute("class", "password-box sign-up");
+  passwInput.setAttribute("required", "");
+
+  const signUpBtn = document.createElement("button");
+  signUpBtn.textContent = "SIGN UP";
+  signUpBtn.setAttribute("class", "sign-up-btn");
+
+  const signInP = document.createElement("p");
+  signInP.textContent = "or ";
+  signInP.setAttribute("class", "sign-up-p");
+
+  const signInSpan = document.createElement("span");
+  signInSpan.textContent = "Sign In";
+  signInSpan.setAttribute("class", "sign-up-span-link");
+  signInSpan.addEventListener("click", (e) => {
+    renderBody();
+    renderSignInModal();
+  });
+
+  const modalCloseBtn = document.createElement("button");
+  modalCloseBtn.textContent = "X";
+  modalCloseBtn.setAttribute("class", "close-modal-btn");
+  modalCloseBtn.addEventListener("click", (e) => {
+    if (e.target === modalCloseBtn) {
+      modalBackgroundDiv.remove();
+    }
+  });
+
+  signUpForm.append(
+    nameLabel,
+    nameInput,
+    surnameLabel,
+    surnameInput,
+    emailLabel,
+    emailInput,
+    passwLabel,
+    passwInput,
+    signUpBtn,
+    signInP
+  );
+  signInP.append(signInSpan);
+  modalDiv.append(modalCloseBtn, signUpH2, signUpForm);
+  modalBackgroundDiv.append(modalDiv);
+  document.body.append(modalBackgroundDiv);
+}
 function renderHeader() {
   const headerEl = document.createElement("header");
 
@@ -530,7 +670,18 @@ function getStoreFromServer() {
   );
 }
 function getUsersFromServer(id) {
-  return fetch("http://localhost:3000/users/" + id).then((resp) => resp.json());
+  return fetch("http://localhost:3000/users/" + id).then((resp) => {
+    if (!resp.ok) {
+      let modalDiv = document.querySelector(".modal");
+      const badInfoSpan = document.createElement("span");
+      badInfoSpan.textContent = `Wrong info or user doesn't exist`;
+      badInfoSpan.style.color = "red";
+      badInfoSpan.style.fontWeight = 700;
+      modalDiv.append(badInfoSpan);
+    } else {
+      return resp.json();
+    }
+  });
 }
 
 getStoreFromServer().then((store) => {
