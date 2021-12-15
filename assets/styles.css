@@ -112,6 +112,12 @@ div.new {
     color: white;
     font-size: 1rem;
 }
+#disabled-cart-btn{
+    text-decoration: line-through;
+    background-image: none;
+    background-color: #e82727b3;
+    color: black;
+}
 div.stock {
     position: absolute;
     z-index: 2;

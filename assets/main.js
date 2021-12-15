@@ -715,6 +715,10 @@ function renderProductPage() {
   const addCartBtn = document.createElement("button");
   addCartBtn.setAttribute("class", "add-cart-btn");
   addCartBtn.textContent = "ADD TO BAG";
+  if(selectedProduct[0].stock===0){
+    addCartBtn.setAttribute('disabled','')
+    addCartBtn.setAttribute('id','disabled-cart-btn')
+  }
   addCartBtn.addEventListener("click", (e) => {
     if (
       state.user &&
