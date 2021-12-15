@@ -471,7 +471,7 @@ function renderHeader() {
   cartImg.setAttribute("src", "assets/cart.svg");
   const nrOfCartItemsDiv = document.createElement("div");
   nrOfCartItemsDiv.setAttribute("class", "nr-in-cart");
-  nrOfCartItemsDiv.textContent = "1";
+  nrOfCartItemsDiv.textContent = state.user?state.user.bag.length:'0';
 
   document.body.append(headerEl);
   headerEl.append(navEl);
