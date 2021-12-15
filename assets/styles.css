@@ -112,13 +112,13 @@ div.new {
     color: white;
     font-size: 1rem;
 }
-p.prices{
+p.prices, .prices-in-cart{
     display: grid;
     grid-auto-flow: column;
     justify-content: start;
     gap: 1rem;
 }
-span.new{
+span.new, .new-prc-cart{
     color: red;
     font-weight: 900;
 }
@@ -250,4 +250,23 @@ input.sign-in, input.sign-up,input.name, input.surname{
 }
 .sign-up-span-link:hover, .sign-in-span-link:hover{
     text-decoration: underline;
+}
+
+.cart-div{
+    display: grid;
+    grid-template-columns: 80px minmax(200px,1fr);
+    gap: 1rem;
+}
+.rmv-from-cart{
+    width: 100%;
+    background-color: white;
+    font-weight: 700;
+    color: rgb(43, 43, 238);
+    border-color: rgb(43, 43, 238);
+    border-radius: 0.8rem;
+    cursor: pointer;
+}
+.prod-cart-div{
+    display: grid;
+    gap: 0.7rem;
 }

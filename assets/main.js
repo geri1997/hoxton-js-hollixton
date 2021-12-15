@@ -133,6 +133,76 @@ const state = {
   selectedPage: "Home",
 };
 
+function renderCartModal() {
+  const modalBackgroundDiv = document.createElement("div");
+  modalBackgroundDiv.setAttribute("class", "modal-background");
+  modalBackgroundDiv.addEventListener("click", (e) => {
+    if (e.target === modalBackgroundDiv) {
+      modalBackgroundDiv.remove();
+    }
+  });
+  const modalDiv = document.createElement("div");
+  modalDiv.setAttribute("class", "modal");
+  const bagH2 = document.createElement("h2");
+  bagH2.textContent = "Bag";
+  const modalCloseBtn = document.createElement("button");
+  modalCloseBtn.textContent = "X";
+  modalCloseBtn.setAttribute("class", "close-modal-btn");
+  modalCloseBtn.addEventListener("click", (e) => {
+    if (e.target === modalCloseBtn) {
+      modalBackgroundDiv.remove();
+    }
+  });
+  modalBackgroundDiv.append(modalDiv);
+  modalDiv.append(modalCloseBtn, bagH2);
+  if (state.user) {
+    for (let product of state.user.bag) {
+      createBagItem(product,modalDiv);
+    }
+  }
+
+  
+  document.body.append(modalBackgroundDiv);
+}
+function createBagItem(product,appendTo) {
+  let productInCart = state.products.find((prod) => prod.id === product.id);
+
+  const cartItemDiv = document.createElement("div");
+  cartItemDiv.setAttribute("class", "cart-div");
+  const productImg = document.createElement("img");
+  productImg.src = productInCart.image;
+  productImg.setAttribute("class", "prod-img-cart");
+  const prodInfoDiv = document.createElement("div");
+  prodInfoDiv.setAttribute("class", "prod-cart-div");
+  const prodNameh3 = document.createElement("h3");
+  prodNameh3.textContent = productInCart.name;
+  const cartPricesP = document.createElement("p");
+  cartPricesP.setAttribute("class", "prices-in-cart");
+  const prodQuantitySpan = document.createElement("span");
+  prodQuantitySpan.textContent = `(x${product.quantity})`;
+  const oldPriceSpan = document.createElement("span");
+  oldPriceSpan.setAttribute("class", "price");
+  oldPriceSpan.textContent = "£" + productInCart.price;
+  if (productInCart.discountedPrice) {
+    oldPriceSpan.setAttribute("class", "price old");
+    const newPriceSpan = document.createElement("span");
+    newPriceSpan.textContent = "£" + productInCart.discountedPrice;
+    newPriceSpan.setAttribute("class", "price new");
+    newPriceSpan.setAttribute("id", "newPrice");
+    cartPricesP.append(oldPriceSpan, newPriceSpan,prodQuantitySpan);
+  } else {
+    cartPricesP.append(oldPriceSpan, prodQuantitySpan);
+  }
+
+  const rmvBtn = document.createElement("button");
+  rmvBtn.setAttribute("class", "rmv-from-cart");
+  rmvBtn.textContent = "Remove";
+  
+  
+  appendTo.append(cartItemDiv);
+  cartItemDiv.append(productImg, prodInfoDiv);
+  prodInfoDiv.append(prodNameh3, cartPricesP, rmvBtn);
+}
 function renderSearchModal() {
   const modalBackgroundDiv = document.createElement("div");
   modalBackgroundDiv.setAttribute("class", "modal-background");
@@ -204,7 +274,6 @@ function renderProfileModal() {
   modalBackgroundDiv.append(modalDiv);
   document.body.append(modalBackgroundDiv);
 }
-
 function renderSignInModal() {
   const modalBackgroundDiv = document.createElement("div");
   modalBackgroundDiv.setAttribute("class", "modal-background");
@@ -221,7 +290,7 @@ function renderSignInModal() {
   logInForm.setAttribute("class", "log-in-form");
   logInForm.addEventListener("submit", (e) => {
     e.preventDefault();
-    getUsersFromServer(emailInput.value).then((user) => {
+    getUserFromServer(emailInput.value).then((user) => {
       if (user.password === passwInput.value) {
         state.user = user;
         renderBody();
@@ -238,6 +307,7 @@ function renderSignInModal() {
   emailInput.setAttribute("class", "email-box sign-in");
   emailInput.setAttribute("autocomplete", "off");
   emailInput.setAttribute("name", "email-inp");
+  emailInput.setAttribute("required", "");
 
   const passwLabel = document.createElement("label");
   passwLabel.setAttribute("for", "password");
@@ -287,14 +357,14 @@ function renderSignInModal() {
   modalBackgroundDiv.append(modalDiv);
   document.body.append(modalBackgroundDiv);
 }
-function postNewUserToServer(user){
-    fetch("http://localhost:3000/users/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(user),
-    });
+function postNewUserToServer(user) {
+  fetch("http://localhost:3000/users/", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(user),
+  });
 }
 function renderSignUpModal() {
   const modalBackgroundDiv = document.createElement("div");
@@ -313,29 +383,29 @@ function renderSignUpModal() {
   signUpForm.addEventListener("submit", (e) => {
     e.preventDefault();
     let newUser = {
-        firstName:nameInput.value,
-        lastName:surnameInput.value,
-        id:emailInput.value,
-        password:passwInput.value,
-        bag:[]
-    }
-    state.user = newUser
-    postNewUserToServer(newUser)
+      firstName: nameInput.value,
+      lastName: surnameInput.value,
+      id: emailInput.value,
+      password: passwInput.value,
+      bag: [],
+    };
+    state.user = newUser;
+    postNewUserToServer(newUser);
     modalBackgroundDiv.remove();
   });
   const nameLabel = document.createElement("label");
-  nameLabel.setAttribute("for", "name");
+  nameLabel.setAttribute("for", "fName");
   nameLabel.textContent = "First Name";
   const nameInput = document.createElement("input");
   nameInput.setAttribute("type", "text");
-  nameInput.setAttribute("id", "name");
+  nameInput.setAttribute("id", "fName");
   nameInput.setAttribute("class", "name-box name");
   nameInput.setAttribute("autocomplete", "off");
   nameInput.setAttribute("name", "name-inp");
   nameInput.setAttribute("required", "");
   const surnameLabel = document.createElement("label");
   surnameLabel.setAttribute("for", "surname");
-  surnameLabel.textContent = "Surname";
+  surnameLabel.textContent = "Last Name";
   const surnameInput = document.createElement("input");
   surnameInput.setAttribute("type", "text");
   surnameInput.setAttribute("id", "surname");
@@ -466,12 +536,15 @@ function renderHeader() {
   userImg.setAttribute("src", "assets/user.svg");
 
   const cartLi = document.createElement("li");
+  cartLi.addEventListener("click", (e) => {
+    renderCartModal();
+  });
 
   const cartImg = document.createElement("img");
   cartImg.setAttribute("src", "assets/cart.svg");
   const nrOfCartItemsDiv = document.createElement("div");
   nrOfCartItemsDiv.setAttribute("class", "nr-in-cart");
-  nrOfCartItemsDiv.textContent = state.user?state.user.bag.length:'0';
+  nrOfCartItemsDiv.textContent = state.user ? state.user.bag.length : "0";
 
   document.body.append(headerEl);
   headerEl.append(navEl);
@@ -529,7 +602,6 @@ function renderHomeProducts() {
     createProductCard(product);
   }
 }
-
 function renderGirlsProducts() {
   let girlsProducts = returnFilteredProductsBySearch().filter(
     (product) => product.type === "Girls"
@@ -669,7 +741,7 @@ function getStoreFromServer() {
     renderBody
   );
 }
-function getUsersFromServer(id) {
+function getUserFromServer(id) {
   return fetch("http://localhost:3000/users/" + id).then((resp) => {
     if (!resp.ok) {
       let modalDiv = document.querySelector(".modal");
@@ -683,12 +755,6 @@ function getUsersFromServer(id) {
     }
   });
 }
-
-getStoreFromServer().then((store) => {
-  state.products = store;
-  renderBody();
-});
-
 function returnFilteredProductsBySearch() {
   let filteredBySearch = state.products;
   if (state.searchTerm !== "") {
@@ -698,3 +764,8 @@ function returnFilteredProductsBySearch() {
   }
   return filteredBySearch;
 }
+
+getStoreFromServer().then((store) => {
+  state.products = store;
+  renderBody();
+});
