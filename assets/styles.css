@@ -172,7 +172,7 @@ footer{
     gap: 2rem;
     align-content: flex-start;
 }
-.add-cart-btn{
+.add-cart-btn, .pay-btn{
     width: max-content;
     padding: 1rem 1.5rem;
     background-image: linear-gradient(to right, #1991b4, #0b6096);
@@ -180,6 +180,10 @@ footer{
     color: white;
     font-size: 1.2rem;
     border-radius: 30px;
+    cursor: pointer;
+}
+.pay-btn{
+    justify-self: center;
     
 }
 .single-price-p{

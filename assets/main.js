@@ -153,20 +153,34 @@ function renderCartModal() {
       modalBackgroundDiv.remove();
     }
   });
+
   modalBackgroundDiv.append(modalDiv);
-  modalDiv.append(modalCloseBtn, bagH2);
+
+  let totalPay = 0;
+  //create items
+  modalDiv.append(bagH2);
   if (state.user) {
     for (let product of state.user.bag) {
-      createBagItem(product,modalDiv);
+      totalPay += createBagItemAndReturnPrice(product, modalDiv);
     }
+    const payBtn = document.createElement("button");
+    payBtn.setAttribute("class", "pay-btn");
+    payBtn.textContent = `PAY NOW: £${totalPay}`;
+    modalDiv.append(payBtn);
   }
 
-  
+  const payBtn = document.createElement("button");
+  payBtn.setAttribute("class", "pay-btn");
+  payBtn.textContent = `PAY NOW: £${totalPay.toFixed(2)}`;
+  modalDiv.append(modalCloseBtn);
   document.body.append(modalBackgroundDiv);
 }
-function createBagItem(product,appendTo) {
+// function getTotalPrice(){
+//     for()
+// }
+function createBagItemAndReturnPrice(product, appendTo) {
   let productInCart = state.products.find((prod) => prod.id === product.id);
-
+  let totalPay = 0;
   const cartItemDiv = document.createElement("div");
   cartItemDiv.setAttribute("class", "cart-div");
   const productImg = document.createElement("img");
@@ -189,19 +203,45 @@ function createBagItem(product,appendTo) {
     newPriceSpan.textContent = "£" + productInCart.discountedPrice;
     newPriceSpan.setAttribute("class", "price new");
     newPriceSpan.setAttribute("id", "newPrice");
-    cartPricesP.append(oldPriceSpan, newPriceSpan,prodQuantitySpan);
+    cartPricesP.append(oldPriceSpan, newPriceSpan, prodQuantitySpan);
+    totalPay += product.quantity * productInCart.discountedPrice;
   } else {
     cartPricesP.append(oldPriceSpan, prodQuantitySpan);
+    totalPay += product.quantity * productInCart.price;
   }
 
   const rmvBtn = document.createElement("button");
   rmvBtn.setAttribute("class", "rmv-from-cart");
   rmvBtn.textContent = "Remove";
-  
-  
+  rmvBtn.addEventListener("click", (e) => {
+    if (product.quantity > 1) {
+      product.quantity--;
+      renderBody();
+      renderCartModal();
+      updateBagServer();
+    } else {
+      state.user.bag = state.user.bag.filter(
+        (productInBag) => productInBag !== product
+      );
+      renderBody();
+      renderCartModal();
+      updateBagServer();
+    }
+  });
+
   appendTo.append(cartItemDiv);
   cartItemDiv.append(productImg, prodInfoDiv);
   prodInfoDiv.append(prodNameh3, cartPricesP, rmvBtn);
+  return totalPay;
+}
+function updateBagServer() {
+  return fetch("http://localhost:3000/users/" + state.user.id, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ bag: state.user.bag }),
+  });
 }
 function renderSearchModal() {
   const modalBackgroundDiv = document.createElement("div");

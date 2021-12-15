@@ -160,16 +160,16 @@
       "password": "1",
       "bag": [
         {
-          "id": 2,
-          "quantity": 2
-        },
-        {
           "id": 3,
-          "quantity": 2
+          "quantity": 9
         },
         {
           "id": 12,
-          "quantity": 1
+          "quantity": 12
+        },
+        {
+          "id": 5,
+          "quantity": 12
         }
       ]
     }
