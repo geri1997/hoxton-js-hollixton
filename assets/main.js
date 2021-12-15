@@ -435,12 +435,12 @@ function renderSignUpModal() {
         state.user = newUser;
         postNewUserToServer(newUser);
         modalBackgroundDiv.remove();
-      }else{
-          let emailExistSpan = document.createElement('span')
-          emailExistSpan.style.color = "red";
-          emailExistSpan.style.fontWeight = 700;
-          emailExistSpan.textContent = 'A user with this email already exists.'
-          modalDiv.append(emailExistSpan)
+      } else {
+        let emailExistSpan = document.createElement("span");
+        emailExistSpan.style.color = "red";
+        emailExistSpan.style.fontWeight = 700;
+        emailExistSpan.textContent = "A user with this email already exists.";
+        modalDiv.append(emailExistSpan);
       }
     });
   });
@@ -765,6 +765,18 @@ function createProductCard(product) {
     newDiv.setAttribute("class", "new");
     newDiv.textContent = "NEW!";
     productArticle.append(newDiv);
+  }
+
+  if(product.stock ===0){
+    const stockDiv = document.createElement("div");
+    stockDiv.setAttribute("class", "stock");
+    stockDiv.textContent = "No Stock!";
+    productArticle.append(stockDiv);
+  }else if(product.stock < 10) {
+    const stockDiv = document.createElement("div");
+    stockDiv.setAttribute("class", "stock");
+    stockDiv.textContent = "Low Stock!";
+    productArticle.append(stockDiv);
   }
 
   const productImg = document.createElement("img");
