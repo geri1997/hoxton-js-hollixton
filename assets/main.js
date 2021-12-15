@@ -406,6 +406,7 @@ function postNewUserToServer(user) {
     body: JSON.stringify(user),
   });
 }
+
 function renderSignUpModal() {
   const modalBackgroundDiv = document.createElement("div");
   modalBackgroundDiv.setAttribute("class", "modal-background");
@@ -429,9 +430,19 @@ function renderSignUpModal() {
       password: passwInput.value,
       bag: [],
     };
-    state.user = newUser;
-    postNewUserToServer(newUser);
-    modalBackgroundDiv.remove();
+    fetch(`http://localhost:3000/users/${newUser.id}`).then((resp) => {
+      if (!resp.ok) {
+        state.user = newUser;
+        postNewUserToServer(newUser);
+        modalBackgroundDiv.remove();
+      }else{
+          let emailExistSpan = document.createElement('span')
+          emailExistSpan.style.color = "red";
+          emailExistSpan.style.fontWeight = 700;
+          emailExistSpan.textContent = 'A user with this email already exists.'
+          modalDiv.append(emailExistSpan)
+      }
+    });
   });
   const nameLabel = document.createElement("label");
   nameLabel.setAttribute("for", "fName");
@@ -705,18 +716,24 @@ function renderProductPage() {
   addCartBtn.setAttribute("class", "add-cart-btn");
   addCartBtn.textContent = "ADD TO BAG";
   addCartBtn.addEventListener("click", (e) => {
-    if (state.user&&state.user.bag.filter(prod=>prod.id===selectedProduct[0].id).length===0) {
+    if (
+      state.user &&
+      state.user.bag.filter((prod) => prod.id === selectedProduct[0].id)
+        .length === 0
+    ) {
       state.user.bag.push({ id: selectedProduct[0].id, quantity: 1 });
-      state.selectedPage='Home'
-      renderBody()
-      updateBagServer()
-    } else if(state.user) {
-        let existingProd = state.user.bag.filter(prod=>prod.id===selectedProduct[0].id)
-        state.user.bag[state.user.bag.indexOf(existingProd[0])].quantity++
-        state.selectedPage='Home'
-        renderBody()
-        updateBagServer()
-    }else{
+      state.selectedPage = "Home";
+      renderBody();
+      updateBagServer();
+    } else if (state.user) {
+      let existingProd = state.user.bag.filter(
+        (prod) => prod.id === selectedProduct[0].id
+      );
+      state.user.bag[state.user.bag.indexOf(existingProd[0])].quantity++;
+      state.selectedPage = "Home";
+      renderBody();
+      updateBagServer();
+    } else {
       renderSignInModal();
     }
   });
