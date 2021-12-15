@@ -159,19 +159,23 @@ function renderCartModal() {
   let totalPay = 0;
   //create items
   modalDiv.append(bagH2);
-  if (state.user) {
+  if (state.user&&state.user.bag.length!==0) {
     for (let product of state.user.bag) {
       totalPay += createBagItemAndReturnPrice(product, modalDiv);
     }
     const payBtn = document.createElement("button");
     payBtn.setAttribute("class", "pay-btn");
-    payBtn.textContent = `PAY NOW: £${totalPay}`;
+    payBtn.textContent = `PAY NOW: £${totalPay.toFixed(2)}`;
+    payBtn.addEventListener('click',e=>{
+        state.user.bag = []
+        renderBody()
+        updateBagServer()
+    })
     modalDiv.append(payBtn);
   }
 
-  const payBtn = document.createElement("button");
-  payBtn.setAttribute("class", "pay-btn");
-  payBtn.textContent = `PAY NOW: £${totalPay.toFixed(2)}`;
+  
+  
   modalDiv.append(modalCloseBtn);
   document.body.append(modalBackgroundDiv);
 }
